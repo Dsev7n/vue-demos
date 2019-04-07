@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>slot内容分发</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <!-- <my-hello>hello kaelyn</my-hello> -->
+        <my-hello>
+            <ul slot="s1">
+                <li>aaa</li>
+                <li>bbb</li>
+                <li>ccc</li>
+            </ul>
+            <ol slot="s2">
+                <li>111</li>
+                <li>222</li>
+                <li>333</li>
+            </ol>
+        </my-hello>
+    </div>
+
+    <template id="hello">
+        <div>
+            <slot name="s1"></slot>
+            <h3>hello vue</h3>
+            <slot name="s2"></slot>
+            <!-- 单一slot -->
+            <!-- <slot>如果没有原内容，则显示该内容</slot>    -->
+        </div>
+        
+    </template>
+
+    <script>
+        var vm = new Vue({
+            el:"#wrap",
+            components:{
+                'my-hello':{
+                    template:"#hello"
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>

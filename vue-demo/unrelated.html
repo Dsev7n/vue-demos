@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>非父子组件间的数据传递</title>
+    <script src="js/vue.js"></script>
+    <script src="js/axios.min.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <my-a></my-a>
+        <my-b></my-b>
+        <my-c></my-c>
+    </div>
+    <template id="a">
+        <div>
+            <h3>A组件：{{name}}</h3>
+            <button @click="send">A组件将数据发送给C组件</button>
+        </div>
+    </template>
+    <template id="b">
+        <div>
+            <h3>B组件：{{age}}</h3>
+        </div>
+    </template>
+    <template id="c">
+        <div>
+            <h3>C组件：{{name}}</h3>
+            <h3>C组件：{{age}}</h3>
+        </div>
+    </template>
+    <script>
+        var Blank = new Vue();   //创建一个空的VUE实例作为中间人
+        var A = {
+                    template:'#a',
+                    data() {
+                        return{
+                            name:'kalika'
+                        }
+                    },
+                    methods:{
+                        send() {
+                            Blank.$emit('data-a', this.name);
+                        }
+                    }
+                };
+        var B = {
+                    template:"#b",
+                    data() {
+                        return{
+                            name:"Queenie",
+                            age:20
+                        }
+                    },
+                    mounted() {
+                        alert('bbbb')
+                        Blank.$emit('data-b', this.age);
+                    }
+                };
+        var C = {
+                    template:"#c",
+                    data() {
+                        return{
+                            name:'',
+                            age:0,
+                        }
+                    },
+                    methods:{
+
+                    },
+                    created() {   //在模板编译之后侦听
+                        //$on是vue的实例方法
+                        Blank.$on('data-a',name => {  //用箭头函数,如果是普通函数，this不会指向实例C
+                            this.name = name;
+                            console.log(this);
+                        }),
+                        Blank.$on('data-b', age => {
+                            alert('222');
+                            this.age = age;
+                        })
+                    }
+                }
+        var vm = new Vue({
+            el:"#wrap",
+            components:{
+                'my-a':A,
+                'my-b':B,
+                'my-c':C,
+            },
+        })
+    </script>
+</body>
+</html>

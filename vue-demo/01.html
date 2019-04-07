@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>发送AJAX请求</title>
+    <script src="js/vue.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script>
+        window.onload=function() {
+            new Vue({
+                el:'#itany',
+                data:{
+                    user:{
+                        // name:'alice',
+                        // age:19
+                    },
+                    uid:{}
+                },
+                methods:{
+                    send() {
+                        axios({               //axios返回的是一个promise对象
+                            method:'get',
+                            url:"user.json"
+                        }).then(function(res) {
+                            console.log(res.data);
+                        }).catch(res => {
+                            console.log("请求失败" + res.status + ":" + res.statusText);
+                        });
+                    },
+                    sendPost() {
+                        //axios的post请求的数据必须经过处理才会像正常的Formdata一样发送，不然会在RequestPayload中发送，服务器无法正常接收
+                        axios.post('server.php', this.user, {   //可配置的选项，transformRequest表示提交数据前的处理
+                            transformRequest:{
+                                function(data) {
+                                    let params = '';
+                                    for (let index in data) {
+                                        params += index + '=' + data[index] + '&';
+                                    }
+                                    return params;
+                                }
+                            }
+                        }).then(function(res) {
+                            console.log(res.data);
+                        }).catch(res => {
+                            console.log("请求失败" + res.status + ":" + res.statusText);
+                        });
+                    },
+                    getUserById(uid){
+                        //es6标签模板，把整个字符串外面的引号换成``，把变量放在${}里面
+                        axios.get(`https://api.github.com/users/${uid}`)
+                        .then(res => {
+                            console.log(res.data);
+                            this.user = res.data;
+                        })
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div id="itany">
+        <button @click="send">发送请求</button>
+        <br>   
+        Github ID: <input type="text" v-model="uid">
+        <button @click="getUserById(uid)">获取信息</button>
+        <br>
+        姓名: {{user.login}}<br>
+        头像:  <img :src="user.avatar_url" alt="显示不出来">
+    </div>
+</body>
+</html>

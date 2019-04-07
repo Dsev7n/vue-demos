@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>单向数据流</title>
+    <script src="js/vue.js"></script>
+    <script src="js/axios.min.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <h3>父组件 {{name}}</h3>
+        <h3>父组件 {{user.name}}</h3>
+        <input type="text" v-model="name">
+        <!-- 增加.sync修饰符 -->
+        <my-hello :name.sync="name" :user="user"></my-hello>
+        
+    </div>
+    <template id="hello">
+        <div>
+            <h3>子组件 {{name}}</h3>
+            <h3>子组件  {{user.name}}</h3>
+            <button @click="change">子组件改变数据</button>
+            
+        </div>
+    </template>
+   
+    <script>
+        var vm = new Vue({   //父组件
+            el:"#wrap",
+            data:{
+                name:'Queenie',
+                user:{
+                    name:'Kalika',
+                    age:29
+                }
+            },
+            components:{
+                'my-hello':{    //子组件
+                    data() {
+                        return{
+                            // username:this.name  方式一：用另一个变量来存储
+                        }
+                    },
+                    template:'#hello',
+                    props:['name', 'user'],
+                    methods:{
+                        change(){
+                            // this.name = 'kiele'
+                            // this.$emit('update:name', 'kiele')    //方式2：要父子组件数据双向绑定不能直接修改，得用这样的模式
+                            this.user.name = 'kaelyn'
+                        
+                        }
+                    }
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>
